@@ -184,15 +184,4 @@ button:hover{
 }
 
 .dark .screen{
-    background:#000;
-}
-
-.dark .card-front{
-    background:#111;
-}
-
-/* Mobile */
-@media(max-width:768px){
-    .logo{ font-size:3rem; }
-    .container{ grid-template-columns:1fr; }
-}
+    bac
