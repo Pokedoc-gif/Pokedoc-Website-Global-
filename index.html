@@ -180,17 +180,36 @@
     </div>
 </div>
 
-<!-- ===== ITEM REQUEST SECTION ===== -->
-<section class="request-section">
-    <h2>Most Requested Items</h2>
+<!-- ===== SWITCH STYLE REQUEST SECTION ===== -->
+<section class="switch-wrapper">
 
-    <div class="request-box">
-        <input type="text" id="requestName" placeholder="Item Name">
-        <textarea id="requestDetails" placeholder="Details (optional)"></textarea>
-        <button onclick="sendItemRequest()">Submit Request</button>
-    </div>
+  <div class="joycon left-joycon">
+      <div class="stick"></div>
+      <div class="button small"></div>
+      <div class="button small lower"></div>
+  </div>
 
-    <div id="mostRequested"></div>
+  <div class="switch-screen">
+    <div class="power-led"></div>
+      <h2>Most Requested Items</h2>
+
+      <div class="request-box">
+          <input type="text" id="requestName" placeholder="Item Name">
+          <textarea id="requestDetails" placeholder="Details (optional)"></textarea>
+          <button onclick="sendItemRequest()">Submit Request</button>
+      </div>
+
+      <div id="mostRequested"></div>
+  </div>
+
+  <div class="joycon right-joycon">
+      <div class="stick"></div>
+      <div class="button"></div>
+      <div class="button"></div>
+      <div class="button"></div>
+      <div class="button"></div>
+  </div>
+
 </section>
 
 <footer>

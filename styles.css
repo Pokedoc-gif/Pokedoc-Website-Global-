@@ -358,3 +358,167 @@ button:hover{
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* ============================= */
+/* 🎮 NINTENDO SWITCH REQUEST UI */
+/* ============================= */
+
+.switch-wrapper{
+    display:flex;
+    justify-content:center;
+    align-items:stretch;
+    margin:60px auto;
+    max-width:1000px;
+    position:relative;
+}
+
+/* Joycons */
+
+.joycon{
+    width:120px;
+    border-radius:40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px 10px;
+    position:relative;
+}
+
+.left-joycon{
+    background:#00b2ff;
+    border-top-left-radius:60px;
+    border-bottom-left-radius:60px;
+}
+
+.right-joycon{
+    background:#ff3c3c;
+    border-top-right-radius:60px;
+    border-bottom-right-radius:60px;
+}
+
+/* Analog Stick */
+
+.stick{
+    width:50px;
+    height:50px;
+    background:#111;
+    border-radius:50%;
+    margin-bottom:20px;
+    box-shadow:inset 0 0 10px black;
+}
+
+/* Buttons */
+
+.button{
+    width:20px;
+    height:20px;
+    background:#111;
+    border-radius:50%;
+    margin:8px;
+}
+
+.button.small{
+    width:15px;
+    height:15px;
+}
+
+.button.lower{
+    margin-top:40px;
+}
+
+/* Center Screen */
+
+.switch-screen{
+    flex:1;
+    background:#111;
+    padding:40px 30px;
+    text-align:center;
+    box-shadow:inset 0 0 40px #00eaff;
+    border-top:8px solid #222;
+    border-bottom:8px solid #222;
+}
+
+.switch-screen h2{
+    font-size:28px;
+    margin-bottom:25px;
+}
+
+/* Override request box spacing inside screen */
+
+.switch-screen .request-box{
+    max-width:450px;
+    margin:auto;
+}
+
+/* Mobile Responsive */
+
+@media(max-width:900px){
+
+    .switch-wrapper{
+        flex-direction:column;
+        align-items:center;
+    }
+
+    .joycon{
+        width:100%;
+        height:80px;
+        flex-direction:row;
+        justify-content:center;
+        border-radius:40px;
+    }
+
+    .left-joycon,
+    .right-joycon{
+        border-radius:40px;
+    }
+
+    .switch-screen{
+        width:100%;
+    }
+}
+
+/* Power LED */
+.power-led{
+    width:12px;
+    height:12px;
+    background:#00ff66;
+    border-radius:50%;
+    position:absolute;
+    top:15px;
+    right:20px;
+    box-shadow:
+        0 0 5px #00ff66,
+        0 0 15px #00ff66,
+        0 0 30px #00ff66;
+    animation: pulseLED 2s infinite ease-in-out;
+}
+
+@keyframes pulseLED{
+    0%{ opacity:0.6; }
+    50%{ opacity:1; }
+    100%{ opacity:0.6; }
+}
+
+.joycon{
+    transition:all 0.3s ease;
+}
+
+.left-joycon:hover{
+    box-shadow:0 0 30px #00b2ff;
+    transform:scale(1.03);
+}
+
+.right-joycon:hover{
+    box-shadow:0 0 30px #ff3c3c;
+    transform:scale(1.03);
+}
+
+.switch-wrapper{
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+}
+
+.switch-screen{
+    box-shadow:
+        inset 0 0 40px #00eaff,
+        0 10px 30px rgba(0,0,0,0.8);
+}
