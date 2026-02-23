@@ -171,10 +171,27 @@
             <input type="text" id="price4" value="R60"><br><br>
 
             <button onclick="updatePrices()">Update Prices</button>
+            <hr>
+<h3>Customer Requests</h3>
+<button onclick="loadAdminRequests()">Refresh Requests</button>
+<div id="adminRequests"></div>
         </div>
 
     </div>
 </div>
+
+<!-- ===== ITEM REQUEST SECTION ===== -->
+<section class="request-section">
+    <h2>Most Requested Items</h2>
+
+    <div class="request-box">
+        <input type="text" id="requestName" placeholder="Item Name">
+        <textarea id="requestDetails" placeholder="Details (optional)"></textarea>
+        <button onclick="sendItemRequest()">Submit Request</button>
+    </div>
+
+    <div id="mostRequested"></div>
+</section>
 
 <footer>
 © 2026 PokéDoc | Not affiliated with Pokémon

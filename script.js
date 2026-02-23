@@ -1,6 +1,4 @@
 const phoneNumber = "8615253131891";
-const adminPassword = "brolyss5";
-let adminLoggedIn = false;
 
 /* Loader */
 window.addEventListener("load",function(){
@@ -50,39 +48,6 @@ function buyProduct(event,productName){
 document.getElementById("darkToggle").addEventListener("click",function(){
     document.body.classList.toggle("dark");
 });
-
-/* Admin */
-function toggleAdmin(){
-    const panel=document.getElementById("adminPanel");
-
-    if(adminLoggedIn){
-        panel.style.display=panel.style.display==="none"?"block":"none";
-        return;
-    }
-
-    let pass=prompt("Enter Admin Password:");
-
-    if(pass===adminPassword){
-        adminLoggedIn=true;
-        panel.style.display="block";
-    }else{
-        alert("Incorrect password");
-    }
-}
-
-function updatePrices(){
-    document.getElementById("display1").innerText=
-        document.getElementById("price1").value+" each";
-
-    document.getElementById("display2").innerText=
-        document.getElementById("price2").value+" each";
-
-    document.getElementById("display3").innerText=
-        document.getElementById("price3").value+" each";
-
-    document.getElementById("display4").innerText=
-        document.getElementById("price4").value+" each";
-}
 
 /* ===== CLASSIC BATTLE INTRO ===== */
 
@@ -167,3 +132,4 @@ setInterval(()=>{
         }
     });
 },2000);
+
