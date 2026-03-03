@@ -140,8 +140,52 @@
                     <div class="card-back">
                         <h3>Pokemon Accessories Metal Tin</h3>
                         <p>Multiple Options available</p >
-                        <p class="price" id="display5">R65 each</p >
+                        <p class="price" id="display5">R60 each</p >
                         <button onclick="buyProduct(event,'Pokemon Accessories Metal Tin')">
+                Buy via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ CORRECT POSITION -->
+    <div class="shiny-layer"></div>
+
+</div>
+
+            <!-- Uno -->
+            <div class="card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <h3>Pokemon Uno Card Game </h3>
+                        <img src="https://uploads.onecompiler.io/44e4cjszf/44f8dcg6a/Pokemon%20Uno%20Card%20Game%20.png">
+                    </div>
+                    <div class="card-back">
+                        <h3>Pokemon Uno Card Game </h3>
+                        <p>Limited Stock available</p >
+                        <p class="price" id="display6">R100 each</p >
+                        <button onclick="buyProduct(event,'Pokemon Uno Card Game')">
+                Buy via WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ CORRECT POSITION -->
+    <div class="shiny-layer"></div>
+
+</div>
+
+            <!-- Monopoly -->
+            <div class="card" onclick="flipCard(this)">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <h3>Pokemon Monopoly Board Game </h3>
+                        <img src="https://uploads.onecompiler.io/44e4cjszf/44f8dcg6a/Pokemon%20Monopoly%20Board%20Game%20.png">
+                    </div>
+                    <div class="card-back">
+                        <h3>Pokemon Monopoly Board Game </h3>
+                        <p>Limited Stock available</p >
+                        <p class="price" id="display7">R450 each</p >
+                        <button onclick="buyProduct(event,'Pokemon Monopoly Board Game ')">
                 Buy via WhatsApp
             </button>
         </div>
@@ -192,6 +236,12 @@
             <label>Tin Price:</label>
             <input type="text" id="price5" value="R60"><br><br>
 
+            <label>Uno Price:</label>
+            <input type="text" id="price6" value="R100"><br><br>
+            
+            <label>Monopoly Price:</label>
+            <input type="text" id="price7" value="R450"><br><br>
+            
             <button onclick="updatePrices()">Update Prices</button>
             <hr>
 <h3>Customer Requests</h3>
@@ -242,5 +292,4 @@
 <script type="module" src="jsfirebase.js"></script>
 
 </body>
-
 </html>
