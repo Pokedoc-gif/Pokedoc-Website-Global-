@@ -51,7 +51,7 @@ async function loadPrices() {
     document.getElementById("display7").innerText = prices.price7;
     document.getElementById("display8").innerText = prices.price8;
     document.getElementById("display9").innerText = prices.price9;
-    document.getElementById("display10").innerText = prices.price9;
+    document.getElementById("display10").innerText = prices.price10;
   }
 }
 
