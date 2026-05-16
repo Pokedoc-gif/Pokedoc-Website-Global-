@@ -56,6 +56,8 @@ async function loadPrices() {
     document.getElementById("display12").innerText = prices.price12;
     document.getElementById("display13").innerText = prices.price13;
     document.getElementById("display14").innerText = prices.price14;
+    document.getElementById("display15").innerText = prices.price15;
+    document.getElementById("display16").innerText = prices.price16;
   }
 }
 
@@ -75,6 +77,8 @@ async function updatePrices() {
     price12: document.getElementById("price12").value,
     price13: document.getElementById("price13").value,
     price14: document.getElementById("price14").value,
+    price15: document.getElementById("price15").value,
+    price16: document.getElementById("price16").value,
   };
 
   await setDoc(doc(db, "store", "prices"), prices);
