@@ -204,7 +204,7 @@ button:hover{
     background:#111;
 }
 
-.card:nth-child(7) .card-front img,
+.card:nth-child(8) .card-front img,
 .card:nth-child(10) .card-front img{
     max-height:180px;
     width:auto;

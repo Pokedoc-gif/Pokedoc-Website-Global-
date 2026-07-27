@@ -28,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const PRICE_COUNT = 23;
+const PRICE_COUNT = 24;
 
 async function loadPrices() {
   const docRef = doc(db, "store", "prices");
@@ -50,9 +50,13 @@ async function updatePrices() {
     if (input) prices["price" + i] = input.value;
   }
 
-  await setDoc(doc(db, "store", "prices"), prices);
-  alert("Prices Updated Globally ✅");
-  loadPrices();
+  try {
+    await setDoc(doc(db, "store", "prices"), prices);
+    alert("Prices Updated Globally ✅");
+    loadPrices();
+  } catch {
+    alert("Could not update prices.");
+  }
 }
 
 window.updatePrices = updatePrices;
@@ -71,7 +75,7 @@ async function sendItemRequest() {
     return;
   }
 
-  const normalizedName = name.toLowerCase();
+  const normalizedName = name.toLowerCase().replace(/\s+/g, " ").trim();
   const requestsRef = collection(db, "requests");
   const q = query(requestsRef, where("normalizedName", "==", normalizedName));
   const querySnapshot = await getDocs(q);
