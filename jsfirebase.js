@@ -1,5 +1,3 @@
-// jsfirebase.js
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
   getFirestore, 
@@ -15,25 +13,20 @@ import {
   orderBy,
   where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔑 Paste your config here
 const firebaseConfig = {
-  apiKey: "AIzaSyCCxkZZbcAJphfnlTwztK_9LDAf-AXKcXA",
-  authDomain: "pokedoc-store.firebaseapp.com",
-  projectId: "pokedoc-store",
-  storageBucket: "pokedoc-store.firebasestorage.app",
-  messagingSenderId: "342362381577",
-  appId: "1:342362381577:web:be6877326b4e92830b07d8"
+  apiKey: "AIzaSyCCxkZZbcAJphfnlTwztK_9LDAf-AXKcXA",
+  authDomain: "pokedoc-store.firebaseapp.com",
+  projectId: "pokedoc-store",
+  storageBucket: "pokedoc-store.firebasestorage.app",
+  messagingSenderId: "342362381577",
+  appId: "1:342362381577:web:be6877326b4e92830b07d8"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-
-// ==========================
-// 🔥 PRICE SYSTEM
-// ==========================
 
 async function loadPrices() {
   const docRef = doc(db, "store", "prices");
@@ -41,51 +34,19 @@ async function loadPrices() {
 
   if (docSnap.exists()) {
     const prices = docSnap.data();
-
-    document.getElementById("display1").innerText = prices.price1;
-    document.getElementById("display2").innerText = prices.price2;
-    document.getElementById("display3").innerText = prices.price3;
-    document.getElementById("display4").innerText = prices.price4;
-    document.getElementById("display5").innerText = prices.price5;
-    document.getElementById("display6").innerText = prices.price6;
-    document.getElementById("display7").innerText = prices.price7;
-    document.getElementById("display8").innerText = prices.price8;
-    document.getElementById("display9").innerText = prices.price9;
-    document.getElementById("display10").innerText = prices.price10;
-    document.getElementById("display11").innerText = prices.price11;
-    document.getElementById("display12").innerText = prices.price12;
-    document.getElementById("display13").innerText = prices.price13;
-    document.getElementById("display14").innerText = prices.price14;
-    document.getElementById("display15").innerText = prices.price15;
-    document.getElementById("display16").innerText = prices.price16;
-    document.getElementById("display17").innerText = prices.price17;
-    document.getElementById("display18").innerText = prices.price18;
-    document.getElementById("display19").innerText = prices.price19;
+    for (let i = 1; i <= 19; i++) {
+      const el = document.getElementById("display" + i);
+      if (el && prices["price" + i]) el.innerText = prices["price" + i];
+    }
   }
 }
 
 async function updatePrices() {
-  const prices = {
-    price1: document.getElementById("price1").value,
-    price2: document.getElementById("price2").value,
-    price3: document.getElementById("price3").value,
-    price4: document.getElementById("price4").value,
-    price5: document.getElementById("price5").value,
-    price6: document.getElementById("price6").value,
-    price7: document.getElementById("price7").value,
-    price8: document.getElementById("price8").value,
-    price9: document.getElementById("price9").value,
-    price10: document.getElementById("price10").value,
-    price11: document.getElementById("price11").value,
-    price12: document.getElementById("price12").value,
-    price13: document.getElementById("price13").value,
-    price14: document.getElementById("price14").value,
-    price15: document.getElementById("price15").value,
-    price16: document.getElementById("price16").value,
-    price17: document.getElementById("price17").value,
-    price18: document.getElementById("price18").value,
-    price19: document.getElementById("price19").value,
-  };
+  const prices = {};
+  for (let i = 1; i <= 19; i++) {
+    const input = document.getElementById("price" + i);
+    if (input) prices["price" + i] = input.value;
+  }
 
   await setDoc(doc(db, "store", "prices"), prices);
   alert("Prices Updated Globally ✅");
@@ -95,14 +56,13 @@ async function updatePrices() {
 window.updatePrices = updatePrices;
 window.addEventListener("load", loadPrices);
 
-// ==========================
-// 📦 ITEM REQUEST SYSTEM
-// ==========================
-
 async function sendItemRequest() {
+  const nameInput = document.getElementById("requestName");
+  const detailsInput = document.getElementById("requestDetails");
+  if (!nameInput || !detailsInput) return;
 
-  const name = document.getElementById("requestName").value.trim();
-  const details = document.getElementById("requestDetails").value.trim();
+  const name = nameInput.value.trim();
+  const details = detailsInput.value.trim();
 
   if (!name) {
     alert("Enter item name");
@@ -110,119 +70,86 @@ async function sendItemRequest() {
   }
 
   const requestsRef = collection(db, "requests");
-
-  // 🔍 Check if item already exists (prevent duplicates)
   const q = query(requestsRef, where("name", "==", name));
   const querySnapshot = await getDocs(q);
 
   if (!querySnapshot.empty) {
-    // If exists → increase vote
     const existingDoc = querySnapshot.docs[0];
-    await updateDoc(doc(db, "requests", existingDoc.id), {
-      votes: increment(1)
-    });
+    await updateDoc(doc(db, "requests", existingDoc.id), { votes: increment(1) });
   } else {
-    // If new → create document
-    await addDoc(requestsRef, {
-      name: name,
-      details: details,
-      votes: 1,
-      created: new Date()
-    });
+    await addDoc(requestsRef, { name, details, votes: 1, created: new Date() });
   }
 
-  document.getElementById("requestName").value = "";
-  document.getElementById("requestDetails").value = "";
-
+  nameInput.value = "";
+  detailsInput.value = "";
   loadRequests();
   alert("Request submitted 🔥");
 }
 
 window.sendItemRequest = sendItemRequest;
 
-
-// ==========================
-// 📊 LOAD MOST REQUESTED
-// ==========================
-
 async function loadRequests() {
-
   const container = document.getElementById("mostRequested");
   if (!container) return;
 
   container.innerHTML = "";
-
   const q = query(collection(db, "requests"), orderBy("votes", "desc"));
   const snapshot = await getDocs(q);
 
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
-
     container.innerHTML += `
       <div class="request-card">
         <h4>${data.name}</h4>
-        <p>Votes: ${data.votes}</p >
-        <button onclick="voteRequest('${docSnap.id}')">Vote 🔥</button>
+        <p>Votes: ${data.votes}</p>
+        <button type="button" onclick="voteRequest('${docSnap.id}')">Vote 🔥</button>
       </div>
     `;
   });
 }
 
-window.voteRequest = async function(id) {
-
-  await updateDoc(doc(db, "requests", id), {
-    votes: increment(1)
-  });
-
+window.voteRequest = async function (id) {
+  await updateDoc(doc(db, "requests", id), { votes: increment(1) });
   loadRequests();
 };
 
-
-// ==========================
-// 🛠 ADMIN REQUEST VIEW
-// ==========================
-
 async function loadAdminRequests() {
-
   const container = document.getElementById("adminRequests");
   if (!container) return;
 
   container.innerHTML = "";
-
   const snapshot = await getDocs(collection(db, "requests"));
 
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
-
     container.innerHTML += `
       <div class="admin-card">
         <strong>${data.name}</strong>
-        <p>${data.details || "No details"}</p >
-        <p>${data.votes} votes</p >
+        <p>${data.details || "No details"}</p>
+        <p>${data.votes} votes</p>
       </div>
     `;
   });
 }
 
 window.loadAdminRequests = loadAdminRequests;
-
-
-// Auto load on page
 window.addEventListener("load", loadRequests);
-
-// ==========================
-// 🔐 ADMIN LOGIN
-// ==========================
 
 async function adminLogin() {
   const email = prompt("Admin Email:");
   const password = prompt("Admin Password:");
 
+  if (!email || !password) {
+    alert("Login cancelled");
+    return;
+  }
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    document.getElementById("adminPanel").style.display = "block";
+    const panel = document.getElementById("adminPanel");
+    if (panel) panel.style.display = "block";
     alert("Admin Logged In ✅");
-  } catch (error) {
+  } catch {
     alert("Login Failed ❌");
   }
 }
