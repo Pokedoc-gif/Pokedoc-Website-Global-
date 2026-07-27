@@ -12,6 +12,16 @@ body{
     transition:background 0.4s ease;
 }
 
+body.screen-flash{
+    animation:screenFlash 0.4s ease;
+}
+
+@keyframes screenFlash{
+    0%{ filter:brightness(1); }
+    50%{ filter:brightness(2); }
+    100%{ filter:brightness(1); }
+}
+
 #loader{
     position:fixed;
     width:100%;
@@ -194,15 +204,8 @@ button:hover{
     background:#111;
 }
 
-/* Specific image tuning */
-.card:nth-child(7) .card-front img{
-    max-height:180px;
-    width:auto;
-    max-width:100%;
-    object-fit:contain;
-}
-
-.card:nth-child(9) .card-front img{
+.card:nth-child(7) .card-front img,
+.card:nth-child(10) .card-front img{
     max-height:180px;
     width:auto;
     max-width:100%;
@@ -313,11 +316,6 @@ button:hover{
 .switch-screen h2{
     font-size:28px;
     margin-bottom:25px;
-}
-
-.switch-screen .request-box{
-    max-width:450px;
-    margin:auto;
 }
 
 .request-box {
