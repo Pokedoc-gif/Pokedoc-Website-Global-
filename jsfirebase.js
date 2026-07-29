@@ -43,29 +43,34 @@ const products = [
   { id: 12, name: "Pokemon Uno Card Game", price: "R100" },
   { id: 13, name: "Pokemon Monopoly Board Game", price: "R550" },
   { id: 14, name: "Marnie Trainer Collection Gift Tin", price: "R2500" },
-  { id: 15, name: "Pokemon 151 Starters Promo Frame", price: "R500" },
-  { id: 16, name: "Pokemon Mega Dream Booster Box M2a", price: "R2500" },
-  { id: 17, name: "151 Pikachu Exclusive Booster Box", price: "R1500" },
-  { id: 18, name: "151 Psyduck Exclusive Booster Box", price: "R1500" },
-  { id: 19, name: "151 Gengar Exclusive Booster Box", price: "R1500" },
-  { id: 20, name: "151 Double Pikachu Exclusive Booster Box", price: "R1500" },
-  { id: 21, name: "151 Collection Figure Blind Box", price: "R700" },
-  { id: 22, name: "151 Puzzle Refrigerator Magnet Set", price: "R500" },
-  { id: 23, name: "Ponyta 151 Booster Box CBB4C", price: "R900" },
-  { id: 24, name: "Dragon Boat Festival Box", price: "R800" }
+  { id: 15, name: "151 Collection Figure Blind Box", price: "R700" },
+  { id: 16, name: "151 Puzzle Refrigerator Magnet Set", price: "R500" },
+  { id: 17, name: "Pokemon 151 Starters Promo Frame", price: "R500" },
+  { id: 18, name: "Pokemon 30th Anniversary First Partner Illustration Collection", price: "R500" },
+  { id: 19, name: "Pokemon Mega Dream Booster Box M2a", price: "R2500" },
+  { id: 20, name: "151 Pikachu Exclusive Booster Box", price: "R1500" },
+  { id: 21, name: "151 Psyduck Exclusive Booster Box", price: "R1500" },
+  { id: 22, name: "151 Gengar Exclusive Booster Box", price: "R1500" },
+  { id: 23, name: "151 Double Pikachu Exclusive Booster Box", price: "R1500" },
+  { id: 24, name: "Ponyta 151 Booster Box CBB4C", price: "R900" },
+  { id: 25, name: "Dragon Boat Festival Box", price: "R800" }
 ];
 
 const PRICE_COUNT = products.length;
 
 async function loadPrices() {
-  const docSnap = await getDoc(doc(db, "store", "prices"));
-  if (!docSnap.exists()) return;
+  try {
+    const docSnap = await getDoc(doc(db, "store", "prices"));
+    if (!docSnap.exists()) return;
 
-  const prices = docSnap.data();
-  for (let i = 1; i <= PRICE_COUNT; i++) {
-    const el = document.getElementById("display" + i);
-    const value = prices["price" + i];
-    if (el && value) el.innerText = value + " each";
+    const prices = docSnap.data();
+    for (let i = 1; i <= PRICE_COUNT; i++) {
+      const el = document.getElementById("display" + i);
+      const value = prices["price" + i];
+      if (el && value) el.innerText = value + " each";
+    }
+  } catch {
+    console.warn("Could not load prices.");
   }
 }
 
@@ -126,22 +131,26 @@ async function sendItemRequest() {
   const requestsRef = collection(db, "requests");
   const existing = await getDocs(query(requestsRef, where("normalizedName", "==", normalizedName)));
 
-  if (!existing.empty) {
-    await updateDoc(doc(db, "requests", existing.docs[0].id), { votes: increment(1) });
-  } else {
-    await addDoc(requestsRef, {
-      name,
-      normalizedName,
-      details,
-      votes: 1,
-      created: new Date()
-    });
-  }
+  try {
+    if (!existing.empty) {
+      await updateDoc(doc(db, "requests", existing.docs[0].id), { votes: increment(1) });
+    } else {
+      await addDoc(requestsRef, {
+        name,
+        normalizedName,
+        details,
+        votes: 1,
+        created: new Date()
+      });
+    }
 
-  nameInput.value = "";
-  detailsInput.value = "";
-  loadRequests();
-  alert("Request submitted 🔥");
+    nameInput.value = "";
+    detailsInput.value = "";
+    loadRequests();
+    alert("Request submitted 🔥");
+  } catch {
+    alert("Could not submit request.");
+  }
 }
 
 window.sendItemRequest = sendItemRequest;
