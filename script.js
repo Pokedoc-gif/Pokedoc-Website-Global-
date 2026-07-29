@@ -25,10 +25,28 @@ const products = [
   { id: 22, category: "boxes", name: "151 Gengar Exclusive Booster Box", subtitle: "Out of Stock (Restock Pending)", price: "R1500 each", adminPrice: "R1500", image: "https://cdn11.bigcommerce.com/s-pmynegjr7m/images/stencil/1280x1280/products/285916/1663939/collect_slim__57633.1769622711.jpg?c=1" },
   { id: 23, category: "boxes", name: "151 Double Pikachu Exclusive Booster Box", subtitle: "Out of Stock (Restock Pending)", price: "R1500 each", adminPrice: "R1500", image: "https://uploads.onecompiler.io/44e4cjszf/44p5qq6wr/151%20Pikachu%20Exclusive%20Booster%20Box.webp" },
   { id: 24, category: "boxes", name: "Ponyta 151 Booster Box CBB4C", subtitle: "Limited stock available", price: "R900 each", adminPrice: "R900", image: "https://cdn.corenexis.com/f/uhI2g1TTXSQ.webp" },
-  { id: 25, category: "boxes", name: "Dragon Boat Festival Box", subtitle: "Limited stock available", price: "R800 each", adminPrice: "R800", image: "https://cdn.corenexis.com/f/Tdfi7b0p5wS.webp" }
+  { id: 25, category: "boxes", name: "Dragon Boat Festival Box", subtitle: "Limited stock available", price: "R800 each", adminPrice: "R800", image: "https://cdn.corenexis.com/f/Tdfi7b0p5wS.webp" },
+  { id: 26, category: "cards", name: "2007 POKEMON JAPANESE DIAMOND & PEARL MOONLIT PURSUIT #164 UMBREON MOONLIT PURSUIT-1ST ED", subtitle: "NM-MT 8", price: "R1000 each", adminPrice: "R1000", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/147724107/small/iO2IpQtgYk2kQxwip8plzw.jpg" },
+  { id: 27, category: "cards", name: "2001 POKEMON JAPANESE VS #070 BLAINE'S TYPHLOSION 1ST EDITION", subtitle: "NM-MT 8", price: "R2750 each", adminPrice: "R2750", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/149166092/small/XSr_Bs8Npk6FQDOXI97KHA.jpg" },
+  { id: 28, category: "cards", name: "2021 POKEMON JAPANESE SWORD & SHIELD VMAX CLIMAX #244 FA/UMBREON V VMAX CLIMAX", subtitle: "MINT 9", price: "R1100 each", adminPrice: "R1000", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/143968867/small/xlnA3X4teU6khdSz-alW1Q.jpg" },
+  { id: 29, category: "cards", name: "2006 POKEMON JAPANESE MIRACLE CRYSTAL #041 JIRACHI EX-HOLO MIRACLE CRYSTAL-1ST ED.", subtitle: "MINT 9", price: "R8150 each", adminPrice: "R8150", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/153643137/small/d3UuVOSpUUSdZVEBdUmZRg.jpg" },
+  { id: 30, category: "cards", name: "2022 POKEMON GO JAPANESE #055 RADIANT EEVEE", subtitle: "MINT 9", price: "R550 each", adminPrice: "R550", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/136202182/small/w02LpO-VwU-XjeV8lfyhIw.jpg" },
+  { id: 31, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD VSTAR UNIVERSE #218 FA/RAIKOU V VSTAR UNIVERSE", subtitle: "MINT 9", price: "R750 each", adminPrice: "R750", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/150438104/small/eQ6UCjkrmkG4HzqXUGRJAA.jpg" },
+  { id: 32, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD PARADIGM TRIGGER #123 FA/LUGIA VSTAR PARADIGM TRIGGER-UR", subtitle: "MINT 9", price: "R900 each", adminPrice: "R900", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/143526558/small/iSFEGCzeKk2Asbwen6HfqQ.jpg" },
+  { id: 33, category: "cards", name: "2023 POKEMON JAPANESE SV1V-VIOLET ex #089 BOMBIRDIER ART RARE", subtitle: "MINT 9", price: "R300 each", adminPrice: "R300", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/144232393/small/QnBRddh1xkOWaM2WqkvlPg.jpg" },
+  { id: 34, category: "cards", name: "2009 POKEMON JAPANESE HEARTGOLD COLLECTION #022 TOTODILE-REV.FOIL HEARTGOLD COLL-1ST ED.", subtitle: "MINT 9", price: "R1200 each", adminPrice: "R1200", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/161268367/small/mfStrfO-jkmnzdmIDG3B3Q.jpg" },
+  { id: 35, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD VSTAR UNIVERSE #210 FA/LEAFEON VSTAR VSTAR UNIVERSE", subtitle: "MINT 9", price: "R1100 each", adminPrice: "R1100", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/146490361/small/5Cm7mxDscEmWhcPjlAveWg.jpg" },
+  { id: 36, category: "cards", name: "2021 POKEMON JAPANESE SWORD & SHIELD VMAX CLIMAX #244 FA/UMBREON V VMAX CLIMAX", subtitle: "GEM MT 10", price: "R3000 each", adminPrice: "R3000", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/141400680/small/lfaMECsKLEuOT5PG2lwCAA.jpg" },
+  { id: 37, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD DARK PHANTASMA #072 FA/PARASECT DARK PHANTASMA", subtitle: "GEM MT 10", price: "R350 each", adminPrice: "R350", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/136384107/small/2BGp1GZgdUSMXdo0VMvWYA.jpg" },
+  { id: 38, category: "cards", name: "2001 POKEMON JAPANESE EXPEDITION #030 TAUROS EXPEDITION-1ST EDITION", subtitle: "GEM MT 10", price: "R4600 each", adminPrice: "R4600", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/165648357/small/yAnI-u5tWE-hnyyHby2Bgg.jpg" },
+  { id: 39, category: "cards", name: "2026 POKEMON JAPANESE NINJA SPINNER #115 MEGA FLOETTE EX", subtitle: "PRISTINE 10", price: "R2700 each", adminPrice: "R2700", image: "https://ccg-imaging-cgc-tradingcards-production.s3.amazonaws.com/17803004-214a-4fec-9844-b32a2281dc71/TN_CAR6170640-069_OBV.jpg" },
 ];
 
 let activeCategory = "all";
+
+function escapeAttr(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 function createSparkle(card) {
   const layer = card.querySelector(".shiny-layer");
@@ -73,14 +91,14 @@ function renderProducts(category = "all") {
     <div class="card" onclick="flipCard(this)">
       <div class="card-inner">
         <div class="card-front">
-          <h3>${product.name}</h3>
-          <img src="${product.image}" alt="${product.name}">
+          <h3>${escapeAttr(product.name)}</h3>
+          <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}">
         </div>
         <div class="card-back">
-          <h3>${product.name}</h3>
+          <h3>${escapeAttr(product.name)}</h3>
           <p>${product.subtitle}</p>
           <p class="price" id="display${product.id}">${product.price}</p>
-          <button type="button" onclick="buyProduct(event,'${product.name}')">Buy via WhatsApp</button>
+          <button type="button" onclick="buyProduct(event,'${escapeAttr(product.name)}')">Buy via WhatsApp</button>
         </div>
       </div>
       <div class="shiny-layer"></div>
@@ -93,8 +111,8 @@ function renderAdminInputs() {
   if (!container) return;
 
   container.innerHTML = products.map(product => `
-    <label>${product.name} Price:</label>
-    <input type="text" id="price${product.id}" value="${product.adminPrice}">
+    <label>${escapeAttr(product.name)} Price:</label>
+    <input type="text" id="price${product.id}" value="${escapeAttr(product.adminPrice)}">
     <br><br>
   `).join("");
 }
