@@ -26,19 +26,6 @@
   <div class="logo">PokéDoc</div>
   <button id="darkToggle" type="button">🌙 Toggle Dark Mode</button>
 
-  <div class="auth-box">
-    <h3>Trainer Account</h3>
-    <p class="auth-subtitle">Sign in or create an account to save your cart.</p>
-    <input type="email" id="customerEmail" placeholder="Email address">
-    <input type="password" id="customerPassword" placeholder="Password">
-    <div class="auth-actions">
-      <button type="button" onclick="customerSignIn()">Sign In</button>
-      <button type="button" onclick="customerSignUp()">Sign Up</button>
-    </div>
-    <button type="button" class="auth-logout" onclick="customerSignOut()">Sign Out</button>
-    <p id="signedInUser"></p>
-  </div>
-
   <div class="category-tabs" id="categoryTabs">
     <button type="button" class="category-tab active" data-category="all">All</button>
     <button type="button" class="category-tab" data-category="storage">Storage</button>
@@ -50,12 +37,6 @@
 
   <div class="screen">
     <div class="container" id="productGrid"></div>
-
-    <div class="cart-box">
-      <h3>Your Cart</h3>
-      <div id="cartItems" class="cart-items"></div>
-      <button type="button" onclick="checkoutCart()">Checkout via WhatsApp</button>
-    </div>
 
     <div id="adminPanel">
       <h3>Admin Dashboard</h3>
@@ -102,8 +83,6 @@
   © 2026 PokéDoc | Not affiliated with Pokémon
   <button type="button" onclick="toggleAdmin()" style="cursor:pointer;">⚙️</button>
 </footer>
-
-<button id="topButton" type="button" onclick="scrollToTop()">↑ Top</button>
 
 <script type="module" src="jsfirebase.js"></script>
 </body>
