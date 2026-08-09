@@ -78,7 +78,6 @@ async function loadPrices() {
   try {
     const docSnap = await getDoc(doc(db, "store", "prices"));
     if (!docSnap.exists()) return;
-
     const prices = docSnap.data();
     for (let i = 1; i <= PRICE_COUNT; i++) {
       const el = document.getElementById("display" + i);
@@ -89,7 +88,6 @@ async function loadPrices() {
     console.warn("Could not load prices.");
   }
 }
-
 window.loadPrices = loadPrices;
 
 async function updatePrices() {
@@ -98,7 +96,6 @@ async function updatePrices() {
     const input = document.getElementById("price" + i);
     if (input) prices["price" + i] = input.value.trim();
   }
-
   try {
     await setDoc(doc(db, "store", "prices"), prices);
     alert("Prices Updated Globally ✅");
@@ -107,27 +104,13 @@ async function updatePrices() {
     alert("Could not update prices.");
   }
 }
-
 window.updatePrices = updatePrices;
 
 function renderRequestCard(data, id, admin = false) {
   if (admin) {
-    return `
-      <div class="admin-card">
-        <strong>${data.name}</strong>
-        <p>${data.details || "No details"}</p>
-        <p>${data.votes} votes</p>
-      </div>
-    `;
+    return `<div class="admin-card"><strong>${data.name}</strong><p>${data.details || "No details"}</p><p>${data.votes} votes</p></div>`;
   }
-
-  return `
-    <div class="request-card">
-      <h4>${data.name}</h4>
-      <p>Votes: ${data.votes}</p>
-      <button type="button" onclick="voteRequest('${id}')">Vote 🔥</button>
-    </div>
-  `;
+  return `<div class="request-card"><h4>${data.name}</h4><p>Votes: ${data.votes}</p><button type="button" onclick="voteRequest('${id}')">Vote 🔥</button></div>`;
 }
 
 async function sendItemRequest() {
@@ -137,11 +120,7 @@ async function sendItemRequest() {
 
   const name = nameInput.value.trim();
   const details = detailsInput.value.trim();
-
-  if (!name) {
-    alert("Enter item name");
-    return;
-  }
+  if (!name) return alert("Enter item name");
 
   const normalizedName = name.toLowerCase().replace(/\s+/g, " ").trim();
   const requestsRef = collection(db, "requests");
@@ -151,15 +130,8 @@ async function sendItemRequest() {
     if (!existing.empty) {
       await updateDoc(doc(db, "requests", existing.docs[0].id), { votes: increment(1) });
     } else {
-      await addDoc(requestsRef, {
-        name,
-        normalizedName,
-        details,
-        votes: 1,
-        created: new Date()
-      });
+      await addDoc(requestsRef, { name, normalizedName, details, votes: 1, created: new Date() });
     }
-
     nameInput.value = "";
     detailsInput.value = "";
     loadRequests();
@@ -168,20 +140,17 @@ async function sendItemRequest() {
     alert("Could not submit request.");
   }
 }
-
 window.sendItemRequest = sendItemRequest;
 
 async function loadRequests() {
   const container = document.getElementById("mostRequested");
   if (!container) return;
-
   try {
     const snapshot = await getDocs(query(collection(db, "requests"), orderBy("votes", "desc")));
     if (snapshot.empty) {
       container.innerHTML = "<p>No requests yet.</p>";
       return;
     }
-
     container.innerHTML = "";
     snapshot.forEach(docSnap => {
       container.innerHTML += renderRequestCard(docSnap.data(), docSnap.id, false);
@@ -190,7 +159,6 @@ async function loadRequests() {
     container.innerHTML = "<p>Could not load requests.</p>";
   }
 }
-
 window.voteRequest = async function (id) {
   try {
     await updateDoc(doc(db, "requests", id), { votes: increment(1) });
@@ -203,14 +171,12 @@ window.voteRequest = async function (id) {
 async function loadAdminRequests() {
   const container = document.getElementById("adminRequests");
   if (!container) return;
-
   try {
     const snapshot = await getDocs(query(collection(db, "requests"), orderBy("votes", "desc")));
     if (snapshot.empty) {
       container.innerHTML = "<p>No requests yet.</p>";
       return;
     }
-
     container.innerHTML = "";
     snapshot.forEach(docSnap => {
       container.innerHTML += renderRequestCard(docSnap.data(), docSnap.id, true);
@@ -219,38 +185,42 @@ async function loadAdminRequests() {
     container.innerHTML = "<p>Could not load admin requests.</p>";
   }
 }
-
 window.loadAdminRequests = loadAdminRequests;
-
-async function adminLogin() {
-  const email = prompt("Admin Email:");
-  const password = prompt("Admin Password:");
-
-  if (!email || !password) {
-    alert("Login cancelled");
-    return;
-  }
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    const panel = document.getElementById("adminPanel");
-    if (panel) panel.style.display = "block";
-    alert("Admin Logged In ✅");
-  } catch {
-    alert("Login Failed ❌");
-  }
-}
 
 window.toggleAdmin = function () {
   const panel = document.getElementById("adminPanel");
   if (!panel) return;
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+};
 
-  if (panel.style.display === "block") {
-    panel.style.display = "none";
-    return;
-  }
+window.customerSignIn = function () {
+  const email = document.getElementById("customerEmail");
+  if (!email || !email.value.trim()) return alert("Enter your email first.");
+  window.currentCustomerEmail = email.value.trim();
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Signed in as: " + window.currentCustomerEmail;
+};
 
-  adminLogin();
+window.customerSignUp = function () {
+  const email = document.getElementById("customerEmail");
+  if (!email || !email.value.trim()) return alert("Enter your email first.");
+  window.currentCustomerEmail = email.value.trim();
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Account created for: " + window.currentCustomerEmail;
+};
+
+window.customerSignOut = function () {
+  window.currentCustomerEmail = "";
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Signed out.";
+};
+
+window.checkoutCart = function () {
+  if (!window.cart || !window.cart.length) return alert("Your cart is empty.");
+  const items = window.cart.map(item => item.name).join(", ");
+  const email = window.currentCustomerEmail || "customer";
+  const message = encodeURIComponent(`Hi PokeDoc! I am ${email} and I want to order: ${items}`);
+  window.open("https://wa.me/" + "8615253131891" + "?text=" + message, "_blank");
 };
 
 window.addEventListener("load", () => {
