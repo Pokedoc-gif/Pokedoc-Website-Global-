@@ -32,7 +32,7 @@ const products = [
   { id: 29, category: "cards", name: "2001 POKEMON JAPANESE VS #070 BLAINE'S TYPHLOSION 1ST EDITION", subtitle: "NM-MT 8", price: "R2750 each", adminPrice: "R2750", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/149166092/small/XSr_Bs8Npk6FQDOXI97KHA.jpg" },
   { id: 30, category: "cards", name: "2021 POKEMON JAPANESE SWORD & SHIELD VMAX CLIMAX #244 FA/UMBREON V VMAX CLIMAX", subtitle: "MINT 9", price: "R1100 each", adminPrice: "R1000", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/143968867/small/xlnA3X4teU6khdSz-alW1Q.jpg" },
   { id: 31, category: "cards", name: "2006 POKEMON JAPANESE MIRACLE CRYSTAL #041 JIRACHI EX-HOLO MIRACLE CRYSTAL-1ST ED.", subtitle: "MINT 9", price: "R8150 each", adminPrice: "R8150", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/153643137/small/d3UuVOSpUUSdZVEBdUmZRg.jpg" },
-  { id: 32, category: "cards", name: "2022 POKEMON GO JAPANESE #055 RADIANT EEVEE", subtitle: "MINT 9", price: "Sold", adminPrice: "Sold", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/136202182/small/w02LpO-VwU-XjeV8lfyhIw.jpg" },
+  { id: 32, category: "cards", name: "2022 POKEMON GO JAPANESE #055 RADIANT EEVEE", subtitle: "MINT 9", price: "R550 each", adminPrice: "R550", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/136202182/small/w02LpO-VwU-XjeV8lfyhIw.jpg" },
   { id: 33, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD VSTAR UNIVERSE #218 FA/RAIKOU V VSTAR UNIVERSE", subtitle: "MINT 9", price: "R750 each", adminPrice: "R750", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/150438104/small/eQ6UCjkrmkG4HzqXUGRJAA.jpg" },
   { id: 34, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD PARADIGM TRIGGER #123 FA/LUGIA VSTAR PARADIGM TRIGGER-UR", subtitle: "MINT 9", price: "R900 each", adminPrice: "R900", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/143526558/small/iSFEGCzeKk2Asbwen6HfqQ.jpg" },
   { id: 35, category: "cards", name: "2023 POKEMON JAPANESE SV1V-VIOLET ex #089 BOMBIRDIER ART RARE", subtitle: "MINT 9", price: "R300 each", adminPrice: "R300", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/144232393/small/QnBRddh1xkOWaM2WqkvlPg.jpg" },
@@ -45,6 +45,8 @@ const products = [
 ];
 
 let activeCategory = "all";
+let cart = [];
+window.cart = cart;
 
 function escapeAttr(value) {
   return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -53,12 +55,10 @@ function escapeAttr(value) {
 function createSparkle(card) {
   const layer = card.querySelector(".shiny-layer");
   if (!layer) return;
-
   const sparkle = document.createElement("div");
   sparkle.classList.add("sparkle");
   sparkle.style.top = Math.random() * 100 + "%";
   sparkle.style.left = Math.random() * 100 + "%";
-
   layer.appendChild(sparkle);
   setTimeout(() => sparkle.remove(), 1000);
 }
@@ -83,12 +83,42 @@ function buyProduct(event, productName) {
 }
 window.buyProduct = buyProduct;
 
+function addToCart(id) {
+  const item = products.find(p => p.id === id);
+  if (!item) return;
+  cart.push(item);
+  renderCart();
+}
+window.addToCart = addToCart;
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+window.removeFromCart = removeFromCart;
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  if (!container) return;
+  if (!cart.length) {
+    container.innerHTML = "<p>Your cart is empty.</p>";
+    return;
+  }
+  container.innerHTML = cart.map((item, index) => `
+    <div class="cart-item">
+      <div>
+        <strong>${escapeAttr(item.name)}</strong>
+        <p>${escapeAttr(item.price)}</p>
+      </div>
+      <button type="button" onclick="removeFromCart(${index})">Remove</button>
+    </div>
+  `).join("");
+}
+
 function renderProducts(category = "all") {
   const grid = document.getElementById("productGrid");
   if (!grid) return;
-
   const filtered = category === "all" ? products : products.filter(product => product.category === category);
-
   grid.innerHTML = filtered.map(product => `
     <div class="card" onclick="flipCard(this)">
       <div class="card-inner">
@@ -101,6 +131,7 @@ function renderProducts(category = "all") {
           <p>${product.subtitle}</p>
           <p class="price" id="display${product.id}">${product.price}</p>
           <button type="button" onclick="buyProduct(event,'${escapeAttr(product.name)}')">Buy via WhatsApp</button>
+          <button type="button" onclick="addToCart(${product.id})">Add to Cart</button>
         </div>
       </div>
       <div class="shiny-layer"></div>
@@ -111,7 +142,6 @@ function renderProducts(category = "all") {
 function renderAdminInputs() {
   const container = document.getElementById("priceInputs");
   if (!container) return;
-
   container.innerHTML = products.map(product => `
     <label>${escapeAttr(product.name)} Price:</label>
     <input type="text" id="price${product.id}" value="${escapeAttr(product.adminPrice)}">
@@ -127,12 +157,11 @@ function setActiveTab(category) {
   renderProducts(category);
   loadPrices();
 }
+window.setActiveTab = setActiveTab;
 
 const darkToggle = document.getElementById("darkToggle");
 if (darkToggle) {
-  darkToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-  });
+  darkToggle.addEventListener("click", () => document.body.classList.toggle("dark"));
 }
 
 const tabs = document.getElementById("categoryTabs");
@@ -144,61 +173,56 @@ if (tabs) {
   });
 }
 
+window.scrollToTop = function () {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.checkoutCart = function () {
+  if (!cart.length) {
+    alert("Your cart is empty.");
+    return;
+  }
+  const items = cart.map(item => item.name).join(", ");
+  const email = window.currentCustomerEmail || "customer";
+  const message = encodeURIComponent(`Hi PokeDoc! I am ${email} and I want to order: ${items}`);
+  window.open("https://wa.me/" + phoneNumber + "?text=" + message, "_blank");
+};
+
+window.customerSignIn = function () {
+  const email = document.getElementById("customerEmail");
+  if (!email || !email.value.trim()) return alert("Enter your email first.");
+  window.currentCustomerEmail = email.value.trim();
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Signed in as: " + window.currentCustomerEmail;
+};
+
+window.customerSignUp = function () {
+  const email = document.getElementById("customerEmail");
+  if (!email || !email.value.trim()) return alert("Enter your email first.");
+  window.currentCustomerEmail = email.value.trim();
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Account created for: " + window.currentCustomerEmail;
+};
+
+window.customerSignOut = function () {
+  window.currentCustomerEmail = "";
+  const el = document.getElementById("signedInUser");
+  if (el) el.innerText = "Signed out.";
+};
+
+window.addEventListener("scroll", () => {
+  const topButton = document.getElementById("topButton");
+  if (topButton) topButton.style.display = window.scrollY > 300 ? "block" : "none";
+});
+
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
   if (loader) loader.style.display = "none";
-
   renderProducts(activeCategory);
   renderAdminInputs();
-
-  const intro = document.getElementById("battleIntro");
-  const textBox = document.getElementById("battleText");
-  const blastoise = document.getElementById("introBlastoise");
-  const flash = document.querySelector(".flash");
-
-  if (!intro || !textBox || !blastoise || !flash) return;
-
-  const messages = [
-    "A wild customer appeared!",
-    "Go! Blastoise!",
-    "PokéDoc is ready for battle!"
-  ];
-
-  let i = 0;
-
-  function showMessage() {
-    if (i < messages.length) {
-      textBox.innerText = messages[i];
-      textBox.style.opacity = 1;
-
-      setTimeout(() => {
-        textBox.style.opacity = 0;
-        i++;
-        setTimeout(showMessage, 600);
-      }, 1500);
-    } else {
-      startBattle();
-    }
-  }
-
-  function startBattle() {
-    flash.style.opacity = 1;
-
-    setTimeout(() => {
-      flash.style.opacity = 0;
-      blastoise.style.opacity = 1;
-      blastoise.style.transition = "all 1s ease";
-      blastoise.style.bottom = "0px";
-
-      setTimeout(() => {
-        intro.style.transition = "opacity 1s ease";
-        intro.style.opacity = 0;
-        setTimeout(() => intro.remove(), 1000);
-      }, 1500);
-    }, 400);
-  }
-
-  setTimeout(showMessage, 800);
+  renderCart();
+  loadPrices();
+  loadRequests();
 });
 
 setInterval(() => {
