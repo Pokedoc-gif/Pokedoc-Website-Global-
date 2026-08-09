@@ -144,12 +144,24 @@ if (tabs) {
   });
 }
 
+window.scrollToTop = function () {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+const topButton = document.getElementById("topButton");
+function toggleTopButton() {
+  if (!topButton) return;
+  topButton.style.display = window.scrollY > 300 ? "block" : "none";
+}
+window.addEventListener("scroll", toggleTopButton);
+
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
   if (loader) loader.style.display = "none";
 
   renderProducts(activeCategory);
   renderAdminInputs();
+  toggleTopButton();
 
   const intro = document.getElementById("battleIntro");
   const textBox = document.getElementById("battleText");
