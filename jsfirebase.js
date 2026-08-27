@@ -11,7 +11,8 @@ import {
   increment,
   query,
   orderBy,
-  where
+  where,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import {
   getAuth,
@@ -42,15 +43,20 @@ function escapeHTML(value) {
   return div.innerHTML;
 }
 
-function escapeAttr(value) {
-  return escapeHTML(value)
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+function formatPrice(value) {
+  const price = String(value ?? "").trim();
+
+  if (!price) return "";
+  if (/sold out|sold/i.test(price)) return price;
+  if (/each/i.test(price)) return price;
+
+  return `${price} each`;
 }
 
 async function loadPrices() {
   try {
     const snapshot = await getDoc(doc(db, "store", "prices"));
+
     if (!snapshot.exists()) return;
 
     const prices = snapshot.data();
@@ -59,8 +65,8 @@ async function loadPrices() {
       const element = document.getElementById(`display${id}`);
       const value = prices[`price${id}`];
 
-      if (element && value) {
-        element.textContent = `${value} each`;
+      if (element && value !== undefined && value !== null) {
+        element.textContent = formatPrice(value);
       }
     });
   } catch (error) {
@@ -75,15 +81,22 @@ async function updatePrices() {
 
   PRICE_IDS.forEach(id => {
     const input = document.getElementById(`price${id}`);
-    if (input) prices[`price${id}`] = input.value.trim();
+
+    if (input) {
+      const value = input.value.trim();
+
+      if (value) {
+        prices[`price${id}`] = value;
+      }
+    }
   });
 
   try {
-    await setDoc(doc(db, "store", "prices"), prices);
+    await setDoc(doc(db, "store", "prices"), prices, { merge: true });
     await loadPrices();
     alert("Prices Updated Globally ✅");
   } catch (error) {
-    console.error(error);
+    console.error("Price update failed:", error);
     alert("Could not update prices.");
   }
 }
@@ -93,7 +106,8 @@ window.updatePrices = updatePrices;
 function renderRequestCard(data, id, admin = false) {
   const safeName = escapeHTML(data.name || "Unnamed request");
   const safeDetails = escapeHTML(data.details || "No details");
-  const safeVotes = Number(data.votes) || 0;
+  const votes = Number(data.votes);
+  const safeVotes = Number.isFinite(votes) && votes >= 0 ? votes : 0;
 
   if (admin) {
     return `
@@ -109,7 +123,7 @@ function renderRequestCard(data, id, admin = false) {
     <div class="request-card">
       <h4>${safeName}</h4>
       <p>Votes: ${safeVotes}</p>
-      <button type="button" onclick="voteRequest('${escapeAttr(id)}')">
+      <button type="button" onclick="voteRequest(${JSON.stringify(String(id))})">
         Vote 🔥
       </button>
     </div>
@@ -126,7 +140,13 @@ async function sendItemRequest() {
   const details = detailsInput.value.trim();
 
   if (!name) {
-    alert("Enter item name");
+    alert("Enter item name.");
+    nameInput.focus();
+    return;
+  }
+
+  if (name.length > 100 || details.length > 500) {
+    alert("Please keep the item name under 100 characters and details under 500 characters.");
     return;
   }
 
@@ -149,7 +169,7 @@ async function sendItemRequest() {
         normalizedName,
         details,
         votes: 1,
-        created: new Date()
+        created: serverTimestamp()
       });
     }
 
@@ -159,7 +179,7 @@ async function sendItemRequest() {
     await loadRequests();
     alert("Request submitted 🔥");
   } catch (error) {
-    console.error(error);
+    console.error("Request submission failed:", error);
     alert("Could not submit request.");
   }
 }
@@ -168,6 +188,7 @@ window.sendItemRequest = sendItemRequest;
 
 async function loadRequests() {
   const container = document.getElementById("mostRequested");
+
   if (!container) return;
 
   try {
@@ -189,26 +210,29 @@ async function loadRequests() {
       );
     });
   } catch (error) {
-    console.error(error);
+    console.error("Request loading failed:", error);
     container.innerHTML = "<p>Could not load requests.</p>";
   }
 }
 
 window.voteRequest = async id => {
+  if (!id) return;
+
   try {
-    await updateDoc(doc(db, "requests", id), {
+    await updateDoc(doc(db, "requests", String(id)), {
       votes: increment(1)
     });
 
     await loadRequests();
   } catch (error) {
-    console.error(error);
+    console.error("Vote failed:", error);
     alert("Could not vote right now.");
   }
 };
 
 async function loadAdminRequests() {
   const container = document.getElementById("adminRequests");
+
   if (!container) return;
 
   try {
@@ -230,7 +254,7 @@ async function loadAdminRequests() {
       );
     });
   } catch (error) {
-    console.error(error);
+    console.error("Admin request loading failed:", error);
     container.innerHTML = "<p>Could not load admin requests.</p>";
   }
 }
@@ -242,25 +266,30 @@ async function adminLogin() {
   const password = prompt("Admin Password:");
 
   if (!email || !password) {
-    alert("Login cancelled");
+    alert("Login cancelled.");
     return;
   }
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email.trim(), password);
 
     const panel = document.getElementById("adminPanel");
-    if (panel) panel.style.display = "block";
 
-    alert("Admin Logged In ✅");
+    if (panel) {
+      panel.style.display = "block";
+    }
+
+    await loadAdminRequests();
+    alert("Admin logged in ✅");
   } catch (error) {
-    console.error(error);
-    alert("Login Failed ❌");
+    console.error("Admin login failed:", error);
+    alert("Login failed ❌");
   }
 }
 
 window.toggleAdmin = function () {
   const panel = document.getElementById("adminPanel");
+
   if (!panel) return;
 
   if (panel.style.display === "block") {
