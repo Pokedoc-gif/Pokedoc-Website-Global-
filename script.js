@@ -22,8 +22,9 @@ const products = [
   { id: 19, category: "boxes", name: "Pokemon Mega Dream Booster Box M2a", subtitle: "Limited stock available", price: "R2500 each", adminPrice: "R2500", image: "https://i.ebayimg.com/images/g/e3AAAeSw04ppDjdc/s-l1600.webp" },
   { id: 20, category: "boxes", name: "151 Pikachu Exclusive Booster Box", subtitle: "Limited stock available", price: "R1500 each", adminPrice: "R1500", image: "https://japhunter.ch/cdn/shop/files/165.png?v=1770998023&width=1200" },
   { id: 21, category: "boxes", name: "151 Psyduck Exclusive Booster Box", subtitle: "Limited stock available", price: "R1500 each", adminPrice: "R1500", image: "https://japhunter.ch/cdn/shop/files/Product_JAP_Hunter_23233336-b3b9-4d58-b597-171e8a1b466a.png?v=1770998068&width=1200" },
-  { id: 22, category: "boxes", name: "151 Gengar Exclusive Booster Box", subtitle: "Limited stock available", price: "R1500 each", adminPrice: "R1500", image: "https://japhunter.ch/cdn/shop/files/Pok_mon_151C_SET_3_Gengar_Surprise_Booster_BOX_SLIM_Chinese_Edition.png?v=1770998161&width=1200" },
+  { id: 22, category: "boxes", name: "151 Gengar Exclusive Booster Box", subtitle: "Sold Out", price: "R1700", adminPrice: "R1700", image: "https://japhunter.ch/cdn/shop/files/Pok_mon_151C_SET_3_Gengar_Surprise_Booster_BOX_SLIM_Chinese_Edition.png?v=1770998161&width=1200" },
   { id: 23, category: "boxes", name: "151 Double Pikachu Exclusive Booster Box", subtitle: "Limited stock available", price: "R1500 each", adminPrice: "R1500", image: "https://japhunter.ch/cdn/shop/files/Pok_mon_151C_SET_4_Pikachu_Gather_Booster_BOX_Chinese_Editionn.png?v=1770998420&width=1200" },
+  { id: 42, category: "boxes", name: "151 Complete Booster Box Set", subtitle: "Limited stock available", price: "R6000 each", adminPrice: "R6000", image: "https://i.ebayimg.com/images/g/X6AAAeSwAnRqidvM/s-l300.jpg" },
   { id: 24, category: "boxes", name: "Pokémon Dark Crystal Blaze CSV5C - Slim Booster Box", subtitle: "Limited stock available", price: "R1000 each", adminPrice: "R1000", image: "https://japhunter.ch/cdn/shop/files/Pok_mon_Dark_Crystal_Blaze_CSV5C_-_Slim_Display_CHN.png?v=1770998342&width=1200" },
   { id: 25, category: "boxes", name: "Ponyta 151 Booster Box CBB4C", subtitle: "Limited stock available", price: "R1100 each", adminPrice: "R1100", image: "https://cdn.corenexis.com/f/uhI2g1TTXSQ.webp" },
   { id: 26, category: "boxes", name: "Dragon Boat Festival Box", subtitle: "Limited stock available", price: "R1000 each", adminPrice: "R1000", image: "https://japhunter.ch/cdn/shop/files/PokemonTCG_2026DragonBoatFestivalGiftBoxScarlet_VioletSimplifiedChineseEditionSealed.png?v=1778230275&width=1200" },
@@ -41,13 +42,19 @@ const products = [
   { id: 38, category: "cards", name: "2021 POKEMON JAPANESE SWORD & SHIELD VMAX CLIMAX #244 FA/UMBREON V VMAX CLIMAX", subtitle: "GEM MT 10", price: "R3200 each", adminPrice: "R3200", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/141400680/small/lfaMECsKLEuOT5PG2lwCAA.jpg" },
   { id: 39, category: "cards", name: "2022 POKEMON JAPANESE SWORD & SHIELD DARK PHANTASMA #072 FA/PARASECT DARK PHANTASMA", subtitle: "GEM MT 10", price: "R550 each", adminPrice: "R550", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/136384107/small/2BGp1GZgdUSMXdo0VMvWYA.jpg" },
   { id: 40, category: "cards", name: "2001 POKEMON JAPANESE EXPEDITION #030 TAUROS EXPEDITION-1ST EDITION", subtitle: "GEM MT 10", price: "R5000 each", adminPrice: "R5000", image: "https://d1htnxwo4o0jhw.cloudfront.net/cert/165648357/small/yAnI-u5tWE-hnyyHby2Bgg.jpg" },
-  { id: 41, category: "cards", name: "2026 POKEMON JAPANESE NINJA SPINNER #115 MEGA FLOETTE EX", subtitle: "PRISTINE 10", price: "R2900 each", adminPrice: "R2900", image: "https://ccg-imaging-cgc-tradingcards-production.s3.amazonaws.com/17803004-214a-4fec-9844-b32a2281dc71/TN_CAR6170640-069_OBV.jpg" },
+  { id: 41, category: "cards", name: "2026 POKEMON JAPANESE NINJA SPINNER #115 MEGA FLOETTE EX", subtitle: "PRISTINE 10", price: "R2900 each", adminPrice: "R2900", image: "https://ccg-imaging-cgc-tradingcards-production.s3.amazonaws.com/17803004-214a-4fec-9844-b32a2281dc71/TN_CAR6170640-069_OBV.jpg" }
 ];
 
 let activeCategory = "all";
 
+function escapeHTML(value) {
+  const div = document.createElement("div");
+  div.textContent = String(value ?? "");
+  return div.innerHTML;
+}
+
 function escapeAttr(value) {
-  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return escapeHTML(value).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 function createSparkle(card) {
@@ -55,11 +62,11 @@ function createSparkle(card) {
   if (!layer) return;
 
   const sparkle = document.createElement("div");
-  sparkle.classList.add("sparkle");
-  sparkle.style.top = Math.random() * 100 + "%";
-  sparkle.style.left = Math.random() * 100 + "%";
-
+  sparkle.className = "sparkle";
+  sparkle.style.top = `${Math.random() * 100}%`;
+  sparkle.style.left = `${Math.random() * 100}%`;
   layer.appendChild(sparkle);
+
   setTimeout(() => sparkle.remove(), 1000);
 }
 
@@ -71,36 +78,42 @@ function flashScreen() {
 function flipCard(card) {
   card.classList.toggle("flip");
   createSparkle(card);
-  createSparkle(card);
   flashScreen();
 }
+
 window.flipCard = flipCard;
 
 function buyProduct(event, productName) {
   event.stopPropagation();
-  const message = encodeURIComponent("Hi PokeDoc! I want to buy: " + productName);
-  window.open("https://wa.me/" + phoneNumber + "?text=" + message, "_blank");
+  const message = encodeURIComponent(`Hi PokeDoc! I want to buy: ${productName}`);
+  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank", "noopener");
 }
+
 window.buyProduct = buyProduct;
 
 function renderProducts(category = "all") {
   const grid = document.getElementById("productGrid");
   if (!grid) return;
 
-  const filtered = category === "all" ? products : products.filter(product => product.category === category);
+  const filtered = category === "all"
+    ? products
+    : products.filter(product => product.category === category);
 
   grid.innerHTML = filtered.map(product => `
-    <div class="card" onclick="flipCard(this)">
+    <div class="card" tabindex="0" role="button" onclick="flipCard(this)"
+         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard(this)}">
       <div class="card-inner">
         <div class="card-front">
-          <h3>${escapeAttr(product.name)}</h3>
-          <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}">
+          <h3>${escapeHTML(product.name)}</h3>
+          <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy">
         </div>
         <div class="card-back">
-          <h3>${escapeAttr(product.name)}</h3>
-          <p>${product.subtitle}</p>
-          <p class="price" id="display${product.id}">${product.price}</p>
-          <button type="button" onclick="buyProduct(event,'${escapeAttr(product.name)}')">Buy via WhatsApp</button>
+          <h3>${escapeHTML(product.name)}</h3>
+          <p>${escapeHTML(product.subtitle).replace(/&lt;br&gt;/g, "<br>")}</p>
+          <p class="price" id="display${product.id}">${escapeHTML(product.price)}</p>
+          <button type="button" onclick="buyProduct(event, ${escapeAttr(JSON.stringify(product.name))})">
+            Buy via WhatsApp
+          </button>
         </div>
       </div>
       <div class="shiny-layer"></div>
@@ -113,7 +126,7 @@ function renderAdminInputs() {
   if (!container) return;
 
   container.innerHTML = products.map(product => `
-    <label>${escapeAttr(product.name)} Price:</label>
+    <label for="price${product.id}">${escapeHTML(product.name)} Price:</label>
     <input type="text" id="price${product.id}" value="${escapeAttr(product.adminPrice)}">
     <br><br>
   `).join("");
@@ -121,11 +134,16 @@ function renderAdminInputs() {
 
 function setActiveTab(category) {
   activeCategory = category;
+
   document.querySelectorAll(".category-tab").forEach(tab => {
     tab.classList.toggle("active", tab.dataset.category === category);
   });
+
   renderProducts(category);
-  loadPrices();
+
+  if (typeof window.loadPrices === "function") {
+    window.loadPrices();
+  }
 }
 
 const darkToggle = document.getElementById("darkToggle");
@@ -137,22 +155,24 @@ if (darkToggle) {
 
 const tabs = document.getElementById("categoryTabs");
 if (tabs) {
-  tabs.addEventListener("click", (event) => {
-    const btn = event.target.closest(".category-tab");
-    if (!btn) return;
-    setActiveTab(btn.dataset.category);
+  tabs.addEventListener("click", event => {
+    const button = event.target.closest(".category-tab");
+    if (button) setActiveTab(button.dataset.category);
   });
 }
 
-window.scrollToTop = function () {
+window.scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 const topButton = document.getElementById("topButton");
+
 function toggleTopButton() {
-  if (!topButton) return;
-  topButton.style.display = window.scrollY > 300 ? "block" : "none";
+  if (topButton) {
+    topButton.style.display = window.scrollY > 300 ? "block" : "none";
+  }
 }
+
 window.addEventListener("scroll", toggleTopButton);
 
 window.addEventListener("load", () => {
@@ -162,6 +182,10 @@ window.addEventListener("load", () => {
   renderProducts(activeCategory);
   renderAdminInputs();
   toggleTopButton();
+
+  if (typeof window.loadPrices === "function") {
+    window.loadPrices();
+  }
 
   const intro = document.getElementById("battleIntro");
   const textBox = document.getElementById("battleText");
@@ -176,16 +200,16 @@ window.addEventListener("load", () => {
     "PokéDoc is ready for battle!"
   ];
 
-  let i = 0;
+  let index = 0;
 
   function showMessage() {
-    if (i < messages.length) {
-      textBox.innerText = messages[i];
-      textBox.style.opacity = 1;
+    if (index < messages.length) {
+      textBox.textContent = messages[index];
+      textBox.style.opacity = "1";
 
       setTimeout(() => {
-        textBox.style.opacity = 0;
-        i++;
+        textBox.style.opacity = "0";
+        index++;
         setTimeout(showMessage, 600);
       }, 1500);
     } else {
@@ -194,17 +218,17 @@ window.addEventListener("load", () => {
   }
 
   function startBattle() {
-    flash.style.opacity = 1;
+    flash.style.opacity = "1";
 
     setTimeout(() => {
-      flash.style.opacity = 0;
-      blastoise.style.opacity = 1;
+      flash.style.opacity = "0";
+      blastoise.style.opacity = "1";
       blastoise.style.transition = "all 1s ease";
       blastoise.style.bottom = "0px";
 
       setTimeout(() => {
         intro.style.transition = "opacity 1s ease";
-        intro.style.opacity = 0;
+        intro.style.opacity = "0";
         setTimeout(() => intro.remove(), 1000);
       }, 1500);
     }, 400);
