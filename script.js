@@ -3,7 +3,7 @@ const phoneNumber = "8615253131891";
 const products = [
   { id: 1, category: "storage", name: "PSA UV Protective Case", subtitle: "Multiple Colours available", price: "R350 each", adminPrice: "R350", image: "https://uploads.onecompiler.io/44e4cjszf/44e49nb36/psa%20case.png" },
   { id: 2, category: "storage", name: "Pokemon Eevee GX Premium Eeveelutions Binder", subtitle: "480 slots", price: "R1000 each", adminPrice: "R1000", image: "https://moxiecardshop.com/cdn/shop/files/binders_0f2c28fc-e58f-40e7-9bb0-365d0fe30f8e.jpg?v=1711568122&width=1445" },
-  { id: 3, category: "storage", name: "Pokemon Eevee GX Premium Umbreon Binder", subtitle: "480 slots", price: "R3500 each", adminPrice: "R3500", image: "https://i.ebayimg.com/images/g/OZsAAOSw7FRl9PvO/s-l1200.jpg" },
+  { id: 3, category: "storage", name: "Pokemon Eevee GX Premium Umbreon Binder", subtitle: "480 slots", price: "R1800 each", adminPrice: "R1800", image: "https://i.ebayimg.com/images/g/OZsAAOSw7FRl9PvO/s-l1200.jpg" },
   { id: 4, category: "storage", name: "Graded Slab Binder", subtitle: "60 slots", price: "R1500 each", adminPrice: "R1500", image: "https://down-vn.img.susercontent.com/file/vn-11134207-7ras8-mct325v76zcrf6" },
   { id: 5, category: "accessories", name: "Pokemon Eevee GX Premium Eeveelutions Card Sleeves", subtitle: "64 Card Sleeves per pack", price: "R80 each", adminPrice: "R80", image: "https://i.ebayimg.com/images/g/RUIAAOSwboBmyJhT/s-l960.jpg" },
   { id: 6, category: "accessories", name: "Card Sleeves", subtitle: "100 Card Sleeves per pack", price: "R80 each", adminPrice: "R80", image: "https://songeniales.com/cdn/shop/files/22414.jpg?v=1776261226" },
