@@ -69,6 +69,10 @@ async function loadPrices() {
         element.textContent = formatPrice(value);
       }
     });
+
+    if (typeof window.refreshProductAvailability === "function") {
+      window.refreshProductAvailability();
+    }
   } catch (error) {
     console.warn("Could not load prices.", error);
   }

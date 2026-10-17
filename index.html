@@ -3,39 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PokéDoc</title>
+<title>PokéDoc | Pokémon Collectibles & Accessories</title>
+<meta name="description" content="Explore Pokémon card storage, accessories, games, collectibles, and graded cards at PokéDoc. Contact us on WhatsApp to check availability and delivery options.">
+<meta name="theme-color" content="#b51f32">
+<meta property="og:title" content="PokéDoc | Pokémon Collectibles & Accessories">
+<meta property="og:description" content="Browse Pokémon card storage, accessories, games, collectibles, and graded cards at PokéDoc.">
+<meta property="og:type" content="website">
 <link rel="stylesheet" href="styles.css">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
 <script src="script.js" defer></script>
 </head>
 <body>
-<div id="battleIntro">
-  <div class="battle-text" id="battleText"></div>
-  <img id="introBlastoise" src="https://play.pokemonshowdown.com/sprites/ani/blastoise.gif" alt="Blastoise">
-  <div class="flash"></div>
-</div>
-
-<div id="loader">
-  <div class="pokeball">
-    <div class="center-line"></div>
-    <div class="center-button"></div>
-  </div>
-</div>
-
 <div class="pokedex">
-  <div class="logo">PokéDoc</div>
-  <button id="darkToggle" type="button">🌙 Toggle Dark Mode</button>
+  <header class="store-header">
+    <a class="logo" href="#top" aria-label="PokéDoc home">PokéDoc</a>
+    <p class="store-tagline">Collect, protect, and celebrate your favourites.</p>
+    <div class="header-actions">
+      <button id="darkToggle" type="button" aria-pressed="false">🌙 Dark mode</button>
+      <a class="enquiry-link" id="enquiryLink" href="#" aria-label="Open WhatsApp enquiry for selected items">Enquiry list <span id="enquiryCount">0</span></a>
+    </div>
+  </header>
 
-  <div class="category-tabs" id="categoryTabs">
+  <nav class="category-tabs" id="categoryTabs" aria-label="Product categories">
     <button type="button" class="category-tab active" data-category="all">All</button>
     <button type="button" class="category-tab" data-category="storage">Storage</button>
     <button type="button" class="category-tab" data-category="accessories">Accessories</button>
     <button type="button" class="category-tab" data-category="games">Games</button>
     <button type="button" class="category-tab" data-category="cards">Cards</button>
     <button type="button" class="category-tab" data-category="boxes">Boxes</button>
-  </div>
+  </nav>
 
-  <div class="screen">
+  <main class="screen" id="top">
+    <div class="catalog-heading">
+      <p class="eyebrow">The PokéDoc collection</p>
+      <h1>Find your next favourite</h1>
+      <p>Browse collectibles, card care, games, and graded cards.</p>
+    </div>
+    <div class="catalog-toolbar">
+      <label class="search-field" for="productSearch">
+        <span>Search products</span>
+        <input id="productSearch" type="search" placeholder="Try “binder” or “Umbreon”" autocomplete="off">
+      </label>
+      <label class="sort-field" for="productSort">
+        <span>Sort by</span>
+        <select id="productSort">
+          <option value="featured">Featured</option>
+          <option value="name">Name: A to Z</option>
+          <option value="price-low">Price: low to high</option>
+          <option value="price-high">Price: high to low</option>
+        </select>
+      </label>
+    </div>
+    <p id="resultCount" class="result-count" aria-live="polite"></p>
     <div class="container" id="productGrid"></div>
 
     <div id="adminPanel">
@@ -47,35 +66,37 @@
       <button type="button" onclick="loadAdminRequests()">Refresh Requests</button>
       <div id="adminRequests"></div>
     </div>
-  </div>
+  </main>
 </div>
 
-<section class="switch-wrapper">
-  <div class="joycon left-joycon">
-    <div class="stick"></div>
-    <div class="button small"></div>
-    <div class="button small lower"></div>
+<section class="service-information" aria-labelledby="serviceHeading">
+  <div>
+    <p class="eyebrow">Shopping with PokéDoc</p>
+    <h2 id="serviceHeading">Need help before you order?</h2>
+    <p>Have questions before ordering? Message us to confirm current stock, delivery options, payment methods, and return terms.</p>
+    <ul class="service-points">
+      <li>Confirm item availability before payment</li>
+      <li>Ask about delivery and collection options</li>
+      <li>Get details on payment and return terms</li>
+    </ul>
   </div>
+  <a class="contact-link" href="https://wa.me/8615253131891" target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a>
+</section>
 
+<section class="switch-wrapper" aria-labelledby="requestedHeading">
   <div class="switch-screen">
-    <div class="power-led"></div>
-    <h2>Most Requested Items</h2>
+    <h2 id="requestedHeading">Request an item</h2>
+    <p class="request-intro">Looking for something specific? Tell us what you’d like to see in stock.</p>
 
     <div class="request-box">
-      <input type="text" id="requestName" placeholder="Item Name">
-      <textarea id="requestDetails" placeholder="Details (optional)"></textarea>
+      <label class="sr-only" for="requestName">Item name</label>
+      <input type="text" id="requestName" placeholder="Item name" maxlength="100">
+      <label class="sr-only" for="requestDetails">Details (optional)</label>
+      <textarea id="requestDetails" placeholder="Details (optional)" maxlength="500"></textarea>
       <button type="button" onclick="sendItemRequest()">Submit Request</button>
     </div>
 
     <div id="mostRequested"></div>
-  </div>
-
-  <div class="joycon right-joycon">
-    <div class="stick"></div>
-    <div class="button"></div>
-    <div class="button"></div>
-    <div class="button"></div>
-    <div class="button"></div>
   </div>
 </section>
 
@@ -83,7 +104,7 @@
 
 <footer>
   © 2026 PokéDoc | Not affiliated with Pokémon
-  <button type="button" onclick="toggleAdmin()" style="cursor:pointer;">⚙️</button>
+  <button type="button" onclick="toggleAdmin()" aria-label="Admin sign-in" title="Admin sign-in">⚙️</button>
 </footer>
 
 <script type="module" src="jsfirebase.js"></script>

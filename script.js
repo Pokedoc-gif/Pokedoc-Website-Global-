@@ -15,7 +15,7 @@ const products = [
   { id: 12, category: "games", name: "Pokemon Uno Card Game", subtitle: "Limited Stock available", price: "R150 each", adminPrice: "R150", image: "https://uploads.onecompiler.io/44e4cjszf/1785121301867/Pokemon%20Uno%20Card%20Game%20.png" },
   { id: 13, category: "games", name: "Pokemon Monopoly Board Game", subtitle: "Kanto and Johto available", price: "R850 each", adminPrice: "R850", image: "https://uploads.onecompiler.io/44e4cjszf/44peumstd/Pokemon%20Monopoly%20Board%20Game%20.png" },
   { id: 14, category: "boxes", name: "Marnie Trainer Collection Gift Tin", subtitle: "Limited stock available", price: "R1200 each", adminPrice: "R1200", image: "https://design-jm.com/wp-content/uploads/2026/07/Untitled-Project-93.jpg" },
-  { id: 15, category: "boxes", name: "151 Collection Figure Blind Box", subtitle: "Limited stock available", price: "R700 each", adminPrice: "R700", image: "https://i.ebayimg.com/images/g/mEUAAeSwxahp3Elj/s-l1200.jpg" },
+  { id: 15, category: "boxes", name: "151 Collection Figure Blind Box", subtitle: "Limited stock available", price: "R500 each", adminPrice: "R500", image: "https://i.ebayimg.com/images/g/mEUAAeSwxahp3Elj/s-l1200.jpg" },
   { id: 16, category: "boxes", name: "151 Puzzle Refrigerator Magnet Set", subtitle: "Limited stock available", price: "R400 each", adminPrice: "R400", image: "https://japhunter.ch/cdn/shop/files/151_Magnet_Collector_151_Journey_Booster_1_Random_CHN.png?v=1770998380&width=1200" },
   { id: 17, category: "boxes", name: "Pokemon 151 Starters Promo Frame", subtitle: "Limited stock available", price: "R400 each", adminPrice: "R400", image: "https://japhunter.ch/cdn/shop/files/HukuokaSpecialBox_e5bedba1-a87b-46aa-ac71-5a8798d9c8ef.png?v=1770998322&width=1200" },
   { id: 18, category: "boxes", name: "Pokemon 30th Anniversary First Partner Illustration Collection", subtitle: "Limited stock available", price: "R350 each", adminPrice: "R350", image: "https://japhunter.ch/cdn/shop/files/Pok_mon_TCG_China_30th_Anniversary_Original_Partner_Special_Illustration_Card_Set_Vol.1_Blind_Box.png?v=1770999927&width=1200" },
@@ -46,6 +46,17 @@ const products = [
 ];
 
 let activeCategory = "all";
+let searchTerm = "";
+let sortMode = "featured";
+const enquiryItems = new Set((() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem("pokedocEnquiryItems") || "[]");
+    return Array.isArray(saved) ? saved.map(Number).filter(id => products.some(product => product.id === id)) : [];
+  } catch {
+    return [];
+  }
+})());
+const livePrices = new Map();
 
 function escapeHTML(value) {
   const div = document.createElement("div");
@@ -57,68 +68,105 @@ function escapeAttr(value) {
   return escapeHTML(value).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
-function createSparkle(card) {
-  const layer = card.querySelector(".shiny-layer");
-  if (!layer) return;
-
-  const sparkle = document.createElement("div");
-  sparkle.className = "sparkle";
-  sparkle.style.top = `${Math.random() * 100}%`;
-  sparkle.style.left = `${Math.random() * 100}%`;
-  layer.appendChild(sparkle);
-
-  setTimeout(() => sparkle.remove(), 1000);
+function productIsUnavailable(product) {
+  return /sold\s*out|sold/i.test(`${livePrices.get(product.id) || product.price} ${product.subtitle}`);
 }
 
-function flashScreen() {
-  document.body.classList.add("screen-flash");
-  setTimeout(() => document.body.classList.remove("screen-flash"), 400);
+function refreshProductAvailability() {
+  document.querySelectorAll(".product-card").forEach(card => {
+    const product = products.find(item => item.id === Number(card.dataset.productId));
+    const price = card.querySelector(".price");
+    if (!product || !price) return;
+
+    livePrices.set(product.id, price.textContent.trim());
+    const unavailable = productIsUnavailable(product);
+    const badge = card.querySelector(".availability");
+    const button = card.querySelector("[data-enquiry-id]");
+    card.classList.toggle("unavailable", unavailable);
+    if (badge) {
+      badge.textContent = unavailable ? "Sold out" : "Available";
+      badge.classList.toggle("sold", unavailable);
+      badge.classList.toggle("available", !unavailable);
+    }
+    if (button) {
+      const selected = enquiryItems.has(product.id);
+      button.disabled = unavailable && !selected;
+      button.textContent = unavailable && !selected ? "Currently unavailable" : selected ? "Remove from enquiry" : "Add to enquiry";
+      button.classList.toggle("selected", selected);
+    }
+  });
 }
 
-function flipCard(card) {
-  card.classList.toggle("flip");
-  createSparkle(card);
-  flashScreen();
-}
+window.refreshProductAvailability = refreshProductAvailability;
 
-window.flipCard = flipCard;
-
-function buyProduct(event, productName) {
-  event.stopPropagation();
-  const message = encodeURIComponent(`Hi PokeDoc! I want to buy: ${productName}`);
-  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank", "noopener");
-}
-
-window.buyProduct = buyProduct;
-
-function renderProducts(category = "all") {
+function renderProducts() {
   const grid = document.getElementById("productGrid");
   if (!grid) return;
 
-  const filtered = category === "all"
-    ? products
-    : products.filter(product => product.category === category);
+  grid.querySelectorAll("[id^='display']").forEach(element => {
+    const id = Number(element.id.replace("display", ""));
+    if (element.textContent.trim()) livePrices.set(id, element.textContent.trim());
+  });
 
-  grid.innerHTML = filtered.map(product => `
-    <div class="card" tabindex="0" role="button" onclick="flipCard(this)"
-         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipCard(this)}">
-      <div class="card-inner">
-        <div class="card-front">
-          <h3>${escapeHTML(product.name)}</h3>
+  let filtered = products.filter(product => {
+    const matchesCategory = activeCategory === "all" || product.category === activeCategory;
+    const matchesSearch = `${product.name} ${product.subtitle}`.toLowerCase().includes(searchTerm);
+    return matchesCategory && matchesSearch;
+  });
+
+  if (sortMode === "name") {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortMode === "price-low" || sortMode === "price-high") {
+    const direction = sortMode === "price-low" ? 1 : -1;
+    filtered.sort((a, b) => {
+      const priceA = Number((livePrices.get(a.id) || a.adminPrice || "").replace(/[^\d.]/g, ""));
+      const priceB = Number((livePrices.get(b.id) || b.adminPrice || "").replace(/[^\d.]/g, ""));
+      if (!Number.isFinite(priceA)) return Number.isFinite(priceB) ? 1 : 0;
+      if (!Number.isFinite(priceB)) return -1;
+      return (priceA - priceB) * direction;
+    });
+  }
+
+  const resultCount = document.getElementById("resultCount");
+  if (resultCount) resultCount.textContent = `${filtered.length} ${filtered.length === 1 ? "item" : "items"}`;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><h3>No products found</h3><p>Try another search or choose a different category.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(product => {
+    const unavailable = productIsUnavailable(product);
+    const selected = enquiryItems.has(product.id);
+    return `
+      <article class="card product-card${unavailable ? " unavailable" : ""}" data-product-id="${product.id}">
+        <div class="product-image-wrap">
           <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy">
+          <span class="image-fallback" hidden>Image unavailable</span>
+          <span class="availability ${unavailable ? "sold" : "available"}">${unavailable ? "Sold out" : "Available"}</span>
         </div>
-        <div class="card-back">
+        <div class="product-info">
+          <p class="product-category">${escapeHTML(product.category)}</p>
           <h3>${escapeHTML(product.name)}</h3>
-          <p>${escapeHTML(product.subtitle).replace(/&lt;br&gt;/g, "<br>")}</p>
-          <p class="price" id="display${product.id}">${escapeHTML(product.price)}</p>
-          <button type="button" onclick="buyProduct(event, ${escapeAttr(JSON.stringify(product.name))})">
-            Buy via WhatsApp
+          <p class="product-description">${escapeHTML(product.subtitle).replace(/&lt;br&gt;/g, "<br>")}</p>
+          <p class="price" id="display${product.id}">${escapeHTML(livePrices.get(product.id) || product.price)}</p>
+          <button type="button" class="enquiry-item-button${selected ? " selected" : ""}"
+            data-enquiry-id="${product.id}" ${unavailable && !selected ? "disabled" : ""}>
+            ${unavailable && !selected ? "Currently unavailable" : selected ? "Remove from enquiry" : "Add to enquiry"}
           </button>
         </div>
-      </div>
-      <div class="shiny-layer"></div>
-    </div>
-  `).join("");
+      </article>
+    `;
+  }).join("");
+
+  grid.querySelectorAll(".product-image-wrap img").forEach(image => {
+    image.addEventListener("error", () => {
+      image.hidden = true;
+      image.nextElementSibling.hidden = false;
+    }, { once: true });
+  });
+
+  updateEnquiryCount();
 }
 
 function renderAdminInputs() {
@@ -132,24 +180,88 @@ function renderAdminInputs() {
   `).join("");
 }
 
+function updateEnquiryCount() {
+  const count = document.getElementById("enquiryCount");
+  if (count) count.textContent = String(enquiryItems.size);
+}
+
+function saveEnquiryItems() {
+  localStorage.setItem("pokedocEnquiryItems", JSON.stringify([...enquiryItems]));
+  updateEnquiryCount();
+}
+
+function sendEnquiry() {
+  const selectedProducts = products.filter(product => enquiryItems.has(product.id) && !productIsUnavailable(product));
+  if (!selectedProducts.length) {
+    alert("Add at least one available item to your enquiry list first.");
+    return;
+  }
+
+  const lines = selectedProducts.map(product => `• ${product.name} — ${livePrices.get(product.id) || product.price}`);
+  const message = encodeURIComponent(`Hi PokéDoc! Please confirm availability and delivery for:\n${lines.join("\n")}`);
+  window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank", "noopener,noreferrer");
+}
+
 function setActiveTab(category) {
   activeCategory = category;
 
   document.querySelectorAll(".category-tab").forEach(tab => {
-    tab.classList.toggle("active", tab.dataset.category === category);
+    const isActive = tab.dataset.category === category;
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-pressed", String(isActive));
   });
 
-  renderProducts(category);
-
-  if (typeof window.loadPrices === "function") {
-    window.loadPrices();
-  }
+  renderProducts();
 }
 
 const darkToggle = document.getElementById("darkToggle");
 if (darkToggle) {
+  const savedTheme = localStorage.getItem("pokedocTheme");
+  if (savedTheme === "dark") document.body.classList.add("dark");
+  darkToggle.setAttribute("aria-pressed", String(document.body.classList.contains("dark")));
+
   darkToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.toggle("dark");
+    darkToggle.setAttribute("aria-pressed", String(isDark));
+    darkToggle.textContent = isDark ? "☀️ Light mode" : "🌙 Dark mode";
+    localStorage.setItem("pokedocTheme", isDark ? "dark" : "light");
+  });
+  darkToggle.textContent = document.body.classList.contains("dark") ? "☀️ Light mode" : "🌙 Dark mode";
+}
+
+const productGrid = document.getElementById("productGrid");
+if (productGrid) {
+  productGrid.addEventListener("click", event => {
+    const button = event.target.closest("[data-enquiry-id]");
+    if (!button || button.disabled) return;
+
+    const id = Number(button.dataset.enquiryId);
+    if (enquiryItems.has(id)) enquiryItems.delete(id);
+    else enquiryItems.add(id);
+    saveEnquiryItems();
+    renderProducts();
+  });
+}
+
+const enquiryLink = document.getElementById("enquiryLink");
+if (enquiryLink) enquiryLink.addEventListener("click", event => {
+  event.preventDefault();
+  sendEnquiry();
+});
+
+const searchInput = document.getElementById("productSearch");
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderProducts();
+  });
+}
+
+const sortSelect = document.getElementById("productSort");
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
+    sortMode = sortSelect.value;
+    renderProducts();
   });
 }
 
@@ -175,11 +287,8 @@ function toggleTopButton() {
 
 window.addEventListener("scroll", toggleTopButton);
 
-window.addEventListener("load", () => {
-  const loader = document.getElementById("loader");
-  if (loader) loader.style.display = "none";
-
-  renderProducts(activeCategory);
+window.addEventListener("DOMContentLoaded", () => {
+  setActiveTab(activeCategory);
   renderAdminInputs();
   toggleTopButton();
 
@@ -187,58 +296,5 @@ window.addEventListener("load", () => {
     window.loadPrices();
   }
 
-  const intro = document.getElementById("battleIntro");
-  const textBox = document.getElementById("battleText");
-  const blastoise = document.getElementById("introBlastoise");
-  const flash = document.querySelector(".flash");
-
-  if (!intro || !textBox || !blastoise || !flash) return;
-
-  const messages = [
-    "A wild customer appeared!",
-    "Go! Blastoise!",
-    "PokéDoc is ready for battle!"
-  ];
-
-  let index = 0;
-
-  function showMessage() {
-    if (index < messages.length) {
-      textBox.textContent = messages[index];
-      textBox.style.opacity = "1";
-
-      setTimeout(() => {
-        textBox.style.opacity = "0";
-        index++;
-        setTimeout(showMessage, 600);
-      }, 1500);
-    } else {
-      startBattle();
-    }
-  }
-
-  function startBattle() {
-    flash.style.opacity = "1";
-
-    setTimeout(() => {
-      flash.style.opacity = "0";
-      blastoise.style.opacity = "1";
-      blastoise.style.transition = "all 1s ease";
-      blastoise.style.bottom = "0px";
-
-      setTimeout(() => {
-        intro.style.transition = "opacity 1s ease";
-        intro.style.opacity = "0";
-        setTimeout(() => intro.remove(), 1000);
-      }, 1500);
-    }, 400);
-  }
-
-  setTimeout(showMessage, 800);
 });
 
-setInterval(() => {
-  document.querySelectorAll(".card").forEach(card => {
-    if (Math.random() > 0.6) createSparkle(card);
-  });
-}, 2000);
